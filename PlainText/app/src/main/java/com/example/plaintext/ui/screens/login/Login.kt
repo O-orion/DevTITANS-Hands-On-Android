@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -70,7 +71,19 @@ fun Login_screen(
     navigateToList: () -> Unit,
     viewModel: PreferencesViewModel = hiltViewModel()
 ) {
-
+    Scaffold(
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = { navigateToSettings() }
+            )
+        }
+    ) { innerPadding ->
+        Column (
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxWidth()
+        ) { }
+    }
 }
 
 @Composable
