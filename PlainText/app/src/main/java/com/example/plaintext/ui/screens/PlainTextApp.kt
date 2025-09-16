@@ -38,7 +38,7 @@ fun PlainTextApp(
         }
         composable<Screen.Login>{
             Login_screen(
-                navigateToSettings = { appState.navigateToPreferences },
+                navigateToSettings = { appState.navigateToPreferences() },
                 navigateToList = {}
             )
         }
