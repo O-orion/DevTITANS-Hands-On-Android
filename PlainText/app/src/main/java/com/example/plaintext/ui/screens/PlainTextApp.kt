@@ -38,8 +38,18 @@ fun PlainTextApp(
         }
         composable<Screen.Login>{
             Login_screen(
-                navigateToSettings = { appState.navigateToPreferences },
-                navigateToList = {}
+                navigateToSettings = { appState.navigateToPreferences() },
+                navigateToList = { appState.navigateToList() }
+            )
+        }
+        composable<Screen.List> {
+            val listViewModel: ListViewModel = hiltViewModel()
+            ListView(
+                viewModel = listViewModel,
+                navigateBack = { appState.navController.popBackStack() },
+                navigateToEdit = { password ->
+                    appState.navController.navigate(Screen.EditList(password))
+                }
             )
         }
         composable<Screen.EditList>(

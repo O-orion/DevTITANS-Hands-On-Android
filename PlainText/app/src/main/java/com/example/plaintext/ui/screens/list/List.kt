@@ -45,9 +45,30 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.plaintext.data.model.PasswordInfo
 
 @Composable
-fun ListView(
-) {}
+fun ListView(viewModel: ListViewModel = hiltViewModel(),
+             navigateBack: () -> Unit,
+             navigateToEdit: (PasswordInfo) -> Unit
+) {
+    val state = viewModel.listViewState
 
+    Scaffold(
+        topBar = {
+            TopBarComponent(
+                navigateToSettings = { /* ação para ir para settings */ },
+                navigateToSensores = { /* ação para ir para sensores */ }
+            )
+        },
+        floatingActionButton = {
+            AddButton(onClick = { /* futuramente criar senha */ })
+        }
+    ) { innerPadding ->
+        ListItemContent(
+            modifier = Modifier.padding(innerPadding),
+            listState = state,
+            navigateToEdit = navigateToEdit
+        )
+    }
+}
 @Composable
 fun AddButton(onClick: () -> Unit) {
     FloatingActionButton(

@@ -62,6 +62,10 @@ class JetcasterAppState(
         return currentRoute != route
     }
 
+    fun navigateToList() {
+        navController.navigate(Screen.List)
+    }
+
     fun navigateToHello(name: String?){
         navController.navigate(Screen.Hello(name))
     }
