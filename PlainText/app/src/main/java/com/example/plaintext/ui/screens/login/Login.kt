@@ -60,13 +60,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.plaintext.R
 import com.example.plaintext.ui.viewmodel.PreferencesViewModel
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
 data class LoginState(
     val preencher: Boolean,
@@ -75,45 +72,17 @@ data class LoginState(
     val navigateToList: (name: String) -> Unit,
     val checkCredentials: (login: String, password: String) -> Boolean,
 )
-// Criar data class
-data class LoginViewState(
-    val login: String = "",
-    val password: String = "",
-    val checked: Boolean = false
-)
-
-@HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
-
-    var uiState by mutableStateOf(LoginViewState())
-        private set
-
-    fun onLoginChanged(newLogin: String) {
-        uiState = uiState.copy(login = newLogin)
-    }
-
-    fun onPasswordChanged(newPassword: String) {
-        uiState = uiState.copy(password = newPassword)
-    }
-
-    fun onCheckedChanged(newChecked: Boolean) {
-        uiState = uiState.copy(checked = newChecked)
-    }
-
-    fun clearFields() {
-        uiState = LoginViewState()
-    }
-}
-
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel()
+    viewModel: PreferencesViewModel = hiltViewModel()
+    //viewModel: PreferencesViewModel? = null
 ) {
-    val uiState = viewModel.uiState
+    var login by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var checked by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     Scaffold(
@@ -179,8 +148,8 @@ fun Login_screen(
                     modifier = Modifier.width(80.dp)
                 )
                 OutlinedTextField(
-                    value = uiState.login,
-                    onValueChange = { viewModel.onLoginChanged(it) },
+                    value = login,
+                    onValueChange = { login = it },
                     modifier = Modifier.width(270.dp),
                     singleLine = true,
                     textStyle = TextStyle(
@@ -211,8 +180,8 @@ fun Login_screen(
                     modifier = Modifier.width(80.dp)
                 )
                 OutlinedTextField(
-                    value = uiState.password,
-                    onValueChange = { viewModel.onPasswordChanged(it)},
+                    value = password,
+                    onValueChange = { password = it },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.width(270.dp),
                     singleLine = true,
@@ -238,8 +207,8 @@ fun Login_screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = uiState.checked,
-                    onCheckedChange = {viewModel.onCheckedChanged(it)},
+                    checked = checked,
+                    onCheckedChange = {checked = it},
                 )
                 Text(
                     text = "Salvar as informações de login",
@@ -252,13 +221,13 @@ fun Login_screen(
             // Botao
             Button (
                 onClick = {
-                    if (uiState.login.isNotBlank() && uiState.password.isNotBlank()) {
-                        // navega para lista
+                    if (viewModel.checkCredentials(login, password)) {
+                        // Direciona para lista após realizar validação das credenciais
                         navigateToList()
                     }else {
                         Toast.makeText(
                             context,
-                            "Preencha todos os campos",
+                            "Login/Senha inválidos",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -360,5 +329,7 @@ fun PreviewLoginScreen() {
     Login_screen(
         navigateToSettings = {},
         navigateToList = {},
+        //viewModel = viewModel()
+        // viewModel = null
     )
 }
