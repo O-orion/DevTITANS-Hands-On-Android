@@ -77,8 +77,8 @@ data class LoginState(
 fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
-    //viewModel: PreferencesViewModel = hiltViewModel()
-    viewModel: PreferencesViewModel? = null
+    viewModel: PreferencesViewModel = hiltViewModel()
+    //viewModel: PreferencesViewModel? = null
 ) {
     var login by rememberSaveable { mutableStateOf("") }
     var password by rememberSaveable { mutableStateOf("") }
@@ -221,13 +221,13 @@ fun Login_screen(
             // Botao
             Button (
                 onClick = {
-                    if (login.isNotBlank() && password.isNotBlank()) {
-                        // navega para lista
+                    if (viewModel.checkCredentials(login, password)) {
+                        // Direciona para lista após realizar validação das credenciais
                         navigateToList()
                     }else {
                         Toast.makeText(
                             context,
-                            "olá",
+                            "Login/Senha inválidos",
                             Toast.LENGTH_SHORT
                         ).show()
                     }
@@ -330,6 +330,6 @@ fun PreviewLoginScreen() {
         navigateToSettings = {},
         navigateToList = {},
         //viewModel = viewModel()
-        viewModel = null
+        // viewModel = null
     )
 }
