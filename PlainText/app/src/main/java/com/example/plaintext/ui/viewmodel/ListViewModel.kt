@@ -28,33 +28,37 @@ data class ListViewState(
 
 //Utilize o passwordBDStore para obter a lista de senhas e salva-las
 @HiltViewModel
-open class ListViewModel @Inject constructor () : ViewModel() {
+open class ListViewModel @Inject constructor (
+    private val passwordDBStore: PasswordDBStore
+) : ViewModel() {
     var listViewState by mutableStateOf(ListViewState(passwordList = emptyList()))
         private set
 
-    init {
-        // Mock para teste
+    init{
         viewModelScope.launch {
-            val mockList = listOf(
-                PasswordInfo(1, "Email", "meuemail@gmail.com", "123456", "Conta pessoal"),
-                PasswordInfo(2, "Banco", "usuario123", "senha123", "Conta corrente"),
-                PasswordInfo(3, "App X", "userx", "passx", "")
-            )
-            listViewState = listViewState.copy(
-                passwordList = mockList,
-                isCollected = true
-            )
+                //execute o metodo getList() do passwordDBStore e colete o resultado
+                passwordDBStore.getList()
+                    .collect { passwordList ->
+                        val mappedList = passwordList.map {password ->
+                            PasswordInfo(
+                                id = password.id,
+                                name = password.name,
+                                login = password.login,
+                                password = password.password,
+                                notes = password.notes
+                            )
+                        }
+                        listViewState = listViewState.copy(
+                            passwordList = mappedList,
+                            isCollected = true
+                        )
+                    }
+            }
         }
-        //execute o metodo getList() do passwordDBStore e colete o resultado
-    }
 
-
-    fun savePassword(password: PasswordInfo) {
-        // Para teste, apenas adiciona à lista mock
-        listViewState = listViewState.copy(
-            passwordList = listViewState.passwordList + password
-        )
-
+    fun savePassword(password: PasswordInfo){
+        viewModelScope.launch {
+            passwordDBStore.save(password)
+        }
     }
 }
-
