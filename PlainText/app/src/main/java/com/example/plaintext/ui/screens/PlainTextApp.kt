@@ -47,9 +47,10 @@ fun PlainTextApp(
             ListView(
                 viewModel = listViewModel,
                 navigateBack = { appState.navController.popBackStack() },
-                navigateToEdit = { password: PasswordInfo ->
-                    appState.navigateToEditList(password)
-                }
+                navigateToEdit = { password, title ->  // ignora o título
+                    appState.navigateToEditList(password, title)
+                },
+                navigateToSettings = { appState.navigateToPreferences() }
             )
         }
         composable<Screen.EditList>(

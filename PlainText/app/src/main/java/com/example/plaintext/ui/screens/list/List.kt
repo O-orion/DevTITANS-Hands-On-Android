@@ -48,29 +48,42 @@ import com.example.plaintext.data.model.PasswordInfo
 @Composable
 fun ListView(viewModel: ListViewModel = hiltViewModel(),
              navigateBack: () -> Unit,
-             navigateToEdit: (PasswordInfo) -> Unit
+             navigateToSettings: () -> Unit,
+             //navigateToEditItem: (PasswordInfo) -> Unit,
+             //navigateToEdit: (PasswordInfo) -> Unit,
+             navigateToEdit: (PasswordInfo, String) -> Unit
 ) {
     val state = viewModel.listViewState
 
     Scaffold(
         topBar = {
             TopBarComponent(
-                navigateToSettings = { /* ação para ir para settings */ },
+                navigateToSettings = { navigateToSettings()/* ação para ir para settings */ },
                 navigateToSensores = { /* ação para ir para sensores */ }
             )
         },
         floatingActionButton = {
-            AddButton(onClick = { navigateToEdit(PasswordInfo(id = 0,
-                name = "",
-                login = "",
-                password = "",
-                notes = ""))/* futuramente criar senha */ })
+            AddButton(
+                onClick = {
+                    navigateToEdit(
+                        PasswordInfo(
+                            id = 0,
+                            name = "",
+                            login = "",
+                            password = "",
+                            notes = ""
+                        ),
+                        "Adicionar nova senha" // <- aqui
+                    )
+                }
+            )
         }
     ) { innerPadding ->
         ListItemContent(
             modifier = Modifier.padding(innerPadding),
             listState = state,
             navigateToEdit = navigateToEdit
+
         )
     }
 }
@@ -90,7 +103,7 @@ fun AddButton(onClick: () -> Unit) {
 fun ListItemContent(
     modifier: Modifier,
     listState: ListViewState,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    navigateToEdit: (PasswordInfo, String) -> Unit
 ) {
         when {
             !listState.isCollected -> {
@@ -127,7 +140,7 @@ fun LoadingScreen() {
 @Composable
 fun ListItem(
     password: PasswordInfo,
-    navigateToEdit: (password: PasswordInfo) -> Unit
+    navigateToEdit: (PasswordInfo, String) -> Unit
 ) {
     val title = password.name
     val subTitle = password.login
@@ -136,7 +149,7 @@ fun ListItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(70.dp)
-            .clickable { navigateToEdit(password) }
+            .clickable { navigateToEdit(password, "Editar senha") }
             .padding(horizontal = 10.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

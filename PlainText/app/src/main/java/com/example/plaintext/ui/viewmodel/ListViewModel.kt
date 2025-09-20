@@ -32,14 +32,29 @@ open class ListViewModel @Inject constructor () : ViewModel() {
     var listViewState by mutableStateOf(ListViewState(passwordList = emptyList()))
         private set
 
-    init{
+    init {
+        // Mock para teste
         viewModelScope.launch {
-                //execute o metodo getList() do passwordDBStore e colete o resultado
-            }
+            val mockList = listOf(
+                PasswordInfo(1, "Email", "meuemail@gmail.com", "123456", "Conta pessoal"),
+                PasswordInfo(2, "Banco", "usuario123", "senha123", "Conta corrente"),
+                PasswordInfo(3, "App X", "userx", "passx", "")
+            )
+            listViewState = listViewState.copy(
+                passwordList = mockList,
+                isCollected = true
+            )
         }
+        //execute o metodo getList() do passwordDBStore e colete o resultado
+    }
 
 
-    fun savePassword(password: PasswordInfo){
+    fun savePassword(password: PasswordInfo) {
+        // Para teste, apenas adiciona à lista mock
+        listViewState = listViewState.copy(
+            passwordList = listViewState.passwordList + password
+        )
 
     }
 }
+

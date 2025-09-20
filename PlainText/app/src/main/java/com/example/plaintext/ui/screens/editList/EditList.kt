@@ -51,7 +51,44 @@ fun EditList(
     navigateBack: () -> Unit,
     savePassword: (password: PasswordInfo) -> Unit
 ) {
+    val password = args.password
+    val title = args.title  // <- pegue o title aqui
 
+    Scaffold(
+        topBar = { TopBarComponent() }
+    ) { padding ->
+        Column(
+            modifier = Modifier
+                .padding(padding)
+                .padding(16.dp)
+        ) {
+            Text(
+                text = title,
+                fontSize = 24.sp,
+                color = Color.Black,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Text("ID: ${password.id}")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Nome: ${password.name}")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Login: ${password.login}")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Senha: ${password.password}")
+            Spacer(modifier = Modifier.height(8.dp))
+            Text("Notas: ${password.notes ?: "-"}")
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Button(
+                onClick = {
+                    savePassword(password) // atualiza lista mock
+                    navigateBack()         // volta pra tela anterior
+                }
+            ) {
+                Text("Salvar (mock)")
+            }
+        }
+    }
 }
 
 
@@ -89,7 +126,7 @@ fun EditInput(
 @Composable
 fun EditListPreview() {
     EditList(
-        Screen.EditList(PasswordInfo(1, "Nome", "Usuário", "Senha", "Notas")),
+        Screen.EditList(PasswordInfo(1, "Nome", "Usuário", "Senha", "Notas"),title = "Editar senha"),
         navigateBack = {},
         savePassword = {}
     )

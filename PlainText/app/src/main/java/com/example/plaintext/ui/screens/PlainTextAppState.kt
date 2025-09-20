@@ -35,8 +35,9 @@ sealed class Screen() {
 
     @Serializable
     data class EditList(
-        val password: PasswordInfo
-    );
+        val password: PasswordInfo,
+        val title: String // <- NOVO
+    ) : Screen()
 
     @Serializable
     object sensors;
@@ -66,8 +67,8 @@ class JetcasterAppState(
         navController.navigate(Screen.List)
     }
 
-    fun navigateToEditList(password: PasswordInfo) {
-        navController.navigate(Screen.EditList(password))
+    fun navigateToEditList(password: PasswordInfo, title: String) {
+        navController.navigate(Screen.EditList(password, title))
     }
 
     fun navigateToHello(name: String?){
