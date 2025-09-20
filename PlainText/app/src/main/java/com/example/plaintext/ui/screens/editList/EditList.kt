@@ -42,8 +42,12 @@ data class EditListState(
 )
 
 fun isPasswordEmpty(password: PasswordInfo): Boolean {
-    return password.name.isEmpty() && password.login.isEmpty() && password.password.isEmpty() && password.notes.isEmpty()
+    return (password.name?.isEmpty() ?: true) &&
+            (password.login?.isEmpty() ?: true) &&
+            (password.password?.isEmpty() ?: true) &&
+            (password.notes?.isEmpty() ?: true)
 }
+
 
 @Composable
 fun EditList(
