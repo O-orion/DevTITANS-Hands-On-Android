@@ -58,5 +58,12 @@ fun PlainTextApp(
                 navController =  appState.navController
             )
         }
+
+        composable<Screen.List> {
+            ListView(
+                navigateBack = { appState.navigateToLogin() },
+                navigateToEdit = { /* só placeholder por enquanto */ }
+            )
+        }
     }
 }
