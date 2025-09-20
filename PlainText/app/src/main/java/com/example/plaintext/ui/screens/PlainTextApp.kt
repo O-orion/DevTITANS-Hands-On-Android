@@ -48,7 +48,7 @@ fun PlainTextApp(
                 viewModel = listViewModel,
                 navigateBack = { appState.navController.popBackStack() },
                 navigateToEdit = { password ->
-                    appState.navController.navigate(Screen.EditList(password))
+                    appState.navigateToEditList(password)
                 }
             )
         }
@@ -58,7 +58,7 @@ fun PlainTextApp(
             val args = it.toRoute<Screen.EditList>()
             EditList(
                 args,
-                navigateBack = {},
+                navigateBack = {appState.navController.popBackStack()},
                 savePassword = { password -> Unit }
             )
         }
