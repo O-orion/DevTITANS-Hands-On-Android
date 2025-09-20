@@ -18,7 +18,7 @@ import kotlin.reflect.KProperty
 )
 @Immutable
 data class Password(
-    @PrimaryKey
+    @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id") val id: Int,
     @ColumnInfo(name = "name") val name: String,
     @ColumnInfo(name = "login")val login: String,
@@ -33,7 +33,7 @@ data class PasswordInfo(
     val name: String,
     val login: String,
     val password: String,
-    val notes: String,
+    val notes: String? = null,
 ) : Parcelable {
     operator fun getValue(nothing: Nothing?, property: KProperty<*>): Password =
         Password(

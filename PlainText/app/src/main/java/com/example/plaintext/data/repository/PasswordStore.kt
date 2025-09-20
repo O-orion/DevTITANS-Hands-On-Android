@@ -4,13 +4,13 @@ import com.example.plaintext.data.dao.PasswordDao
 import com.example.plaintext.data.model.Password
 import com.example.plaintext.data.model.PasswordInfo
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
+import kotlinx.coroutines.flow.map
 
 interface PasswordDBStore {
     fun getList(): Flow<List<Password>>
     suspend fun add(password: Password): Long
     suspend fun update(password: Password)
-    fun get(id: Int): Password?
+    suspend fun get(id: Int): Password?
     suspend fun save(passwordInfo: PasswordInfo)
     suspend fun isEmpty(): Flow<Boolean>
 }
@@ -19,7 +19,7 @@ class LocalPasswordDBStore(
     private val passwordDao : PasswordDao
 ): PasswordDBStore {
     override fun getList(): Flow<List<Password>> {
-        return flowOf(passwordDao.getAll())
+        return passwordDao.getAll()
     }
 
     override suspend fun add(password: Password): Long {
@@ -30,15 +30,25 @@ class LocalPasswordDBStore(
         return passwordDao.update(password)
     }
 
-    override fun get(id: Int): Password? {
+    override suspend fun get(id: Int): Password? {
         return passwordDao.getById(id)
     }
 
     override suspend fun save(passwordInfo: PasswordInfo) {
-       //TODO  passwordDao.insert(passwordInfo.getValue(null, null))
+        passwordDao.insert(passwordInfo.toPassword())
     }
 
     override suspend fun isEmpty(): Flow<Boolean> {
-        return flowOf (passwordDao.getAll().isEmpty())
+        return passwordDao.getAll().map { it.isEmpty() }
     }
+}
+
+fun PasswordInfo.toPassword(): Password {
+    return Password(
+        id = this.id,
+        name = this.name,
+        login = this.login,
+        password = this.password,
+        notes = this.notes
+    )
 }
