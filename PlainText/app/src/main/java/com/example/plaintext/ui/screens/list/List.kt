@@ -1,5 +1,6 @@
 package com.example.plaintext.ui.screens.list
 
+
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
@@ -158,4 +159,3 @@ fun ListItem(
         )
     }
 }
-

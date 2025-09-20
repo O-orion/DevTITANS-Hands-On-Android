@@ -47,7 +47,7 @@ fun PlainTextApp(
             ListView(
                 viewModel = listViewModel,
                 navigateBack = { appState.navController.popBackStack() },
-                navigateToEdit = { password ->
+                navigateToEdit = { password: PasswordInfo ->
                     appState.navigateToEditList(password)
                 }
             )
