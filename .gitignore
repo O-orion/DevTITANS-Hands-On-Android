@@ -8,12 +8,3 @@ local.properties
 
 # Android Studio
 .idea/
-=======================================
-
-git rm -r --cached PlainText/.gradle
-git rm -r --cached PlainText/.idea
-git rm --cached PlainText/local.properties
-
-
-git add .gitignore
-git commit -m "Remover arquivos temporários e IDE do controle de versão"
