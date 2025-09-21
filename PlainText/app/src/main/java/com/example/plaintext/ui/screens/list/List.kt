@@ -60,7 +60,17 @@ fun ListView(viewModel: ListViewModel = hiltViewModel(),
             )
         },
         floatingActionButton = {
-            AddButton(onClick = { /* futuramente criar senha */ })
+            AddButton(onClick = {
+                navigateToEdit(
+                    PasswordInfo(
+                        id = 0,
+                        name = "",
+                        login = "",
+                        password = "",
+                        notes = ""
+                    )
+                )
+            })
         }
     ) { innerPadding ->
         ListItemContent(

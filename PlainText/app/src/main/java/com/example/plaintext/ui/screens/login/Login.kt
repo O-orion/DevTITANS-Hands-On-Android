@@ -24,45 +24,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.ViewModel
 import com.example.plaintext.R
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
-
-// --- ViewModel e State ---
-data class LoginViewState(
-    val login: String = "",
-    val password: String = "",
-    val checked: Boolean = false
-)
-
-@HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
-
-    var uiState by mutableStateOf(LoginViewState())
-        private set
-
-    fun onLoginChanged(newLogin: String) {
-        uiState = uiState.copy(login = newLogin)
-    }
-
-    fun onPasswordChanged(newPassword: String) {
-        uiState = uiState.copy(password = newPassword)
-    }
-
-    fun onCheckedChanged(newChecked: Boolean) {
-        uiState = uiState.copy(checked = newChecked)
-    }
-
-    fun clearFields() {
-        uiState = LoginViewState()
-    }
-
-    fun checkCredentials(login: String, password: String): Boolean {
-        // Lógica de validação, altere conforme necessário
-        return login == "admin" && password == "1234"
-    }
-}
+import com.example.plaintext.ui.viewmodel.PreferencesViewModel
 
 // --- Tela de Login ---
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,10 +33,25 @@ class LoginViewModel @Inject constructor() : ViewModel() {
 fun Login_screen(
     navigateToSettings: () -> Unit,
     navigateToList: () -> Unit,
-    viewModel: LoginViewModel = hiltViewModel()
+    preferencesViewModel: PreferencesViewModel = hiltViewModel()
 ) {
-    val uiState = viewModel.uiState
+    // Variáveis de estado locais para os campos de texto
+    var loginText by rememberSaveable { mutableStateOf("") }
+    var passwordText by rememberSaveable { mutableStateOf("") }
+    var checked by rememberSaveable { mutableStateOf(false) }
+
     val context = LocalContext.current
+    val preferencesState = preferencesViewModel.preferencesState
+
+    // Use LaunchedEffect para preencher os campos automaticamente
+    // na primeira vez que a tela for carregada, se 'preencher' for true.
+    LaunchedEffect(key1 = Unit) {
+        if (preferencesState.preencher) {
+            loginText = preferencesState.login
+            passwordText = preferencesState.password
+            checked = preferencesState.preencher
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -141,8 +119,8 @@ fun Login_screen(
                     modifier = Modifier.width(80.dp)
                 )
                 OutlinedTextField(
-                    value = uiState.login,
-                    onValueChange = { viewModel.onLoginChanged(it) },
+                    value = loginText,
+                    onValueChange = { loginText = it },
                     modifier = Modifier.width(270.dp),
                     singleLine = true,
                     textStyle = TextStyle(
@@ -173,8 +151,8 @@ fun Login_screen(
                     modifier = Modifier.width(80.dp)
                 )
                 OutlinedTextField(
-                    value = uiState.password,
-                    onValueChange = { viewModel.onPasswordChanged(it) },
+                    value = passwordText,
+                    onValueChange = { passwordText = it },
                     visualTransformation = PasswordVisualTransformation(),
                     modifier = Modifier.width(270.dp),
                     singleLine = true,
@@ -197,8 +175,8 @@ fun Login_screen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Checkbox(
-                    checked = uiState.checked,
-                    onCheckedChange = { viewModel.onCheckedChanged(it) },
+                    checked = checked,
+                    onCheckedChange = { checked = it },
                 )
                 Text(
                     text = "Salvar as informações de login",
@@ -210,7 +188,7 @@ fun Login_screen(
             // Botão
             Button(
                 onClick = {
-                    if (viewModel.checkCredentials(uiState.login, uiState.password)) {
+                    if (preferencesViewModel.checkCredentials(loginText, passwordText)) {
                         navigateToList()
                     } else {
                         Toast.makeText(
